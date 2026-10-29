@@ -1,0 +1,81 @@
+{
+  "total_objects": 72,
+  "category_counts": {
+    "WALL": 32,
+    "WINDOW": 8,
+    "SHADING_H": 8,
+    "SHADING_V": 8,
+    "ROOF": 8,
+    "FLOOR": 8
+  },
+  "facades": {
+    "N": {
+      "wall": 15.9,
+      "window": 3.9,
+      "h": 1.68,
+      "v": 0.884,
+      "wwr": 0.19697,
+      "expected_azimuth_deg": 0
+    },
+    "NE": {
+      "wall": 15.9,
+      "window": 3.9,
+      "h": 1.68,
+      "v": 0.884,
+      "wwr": 0.19697,
+      "expected_azimuth_deg": 45
+    },
+    "E": {
+      "wall": 15.9,
+      "window": 3.9,
+      "h": 1.68,
+      "v": 0.884,
+      "wwr": 0.19697,
+      "expected_azimuth_deg": 90
+    },
+    "SE": {
+      "wall": 15.9,
+      "window": 3.9,
+      "h": 1.68,
+      "v": 0.884,
+      "wwr": 0.19697,
+      "expected_azimuth_deg": 135
+    },
+    "S": {
+      "wall": 15.9,
+      "window": 3.9,
+      "h": 1.68,
+      "v": 0.884,
+      "wwr": 0.19697,
+      "expected_azimuth_deg": 180
+    },
+    "SW": {
+      "wall": 15.9,
+      "window": 3.9,
+      "h": 1.68,
+      "v": 0.884,
+      "wwr": 0.19697,
+      "expected_azimuth_deg": 225
+    },
+    "W": {
+      "wall": 15.9,
+      "window": 3.9,
+      "h": 1.68,
+      "v": 0.884,
+      "wwr": 0.19697,
+      "expected_azimuth_deg": 270
+    },
+    "NW": {
+      "wall": 15.9,
+      "window": 3.9,
+      "h": 1.68,
+      "v": 0.884,
+      "wwr": 0.19697,
+      "expected_azimuth_deg": 315
+    }
+  },
+  "matched_surface_normals": true,
+  "H_PR": 0.39999999999999997,
+  "V_PR": 0.2,
+  "purpose": "geometry and naming convention test, not compliance assessment"
+}

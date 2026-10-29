@@ -1,0 +1,52 @@
+{
+  "csv_objects": 463,
+  "csv_measured": 457,
+  "glb_mesh_nodes": 460,
+  "csv_measured_without_glb_match": [],
+  "glb_without_csv_name": [],
+  "mesh_area_difference_gt_0_01_m2": [],
+  "orientation_mismatches_wall_window": [],
+  "category_counts": {
+    "ROOF": 5,
+    "FLOOR": 4,
+    "SHADING_V": 64,
+    "SHADING_H": 64,
+    "WINDOW": 64,
+    "WALL": 256
+  },
+  "by_orientation": {
+    "W": {
+      "wall_m2": 141.4,
+      "window_m2": 54.6,
+      "shading_h_m2": 23.52,
+      "shading_v_m2": 9.52,
+      "gross_facade_m2": 196.0,
+      "wwr": 0.27857
+    },
+    "S": {
+      "wall_m2": 181.8,
+      "window_m2": 70.2,
+      "shading_h_m2": 30.24,
+      "shading_v_m2": 12.24,
+      "gross_facade_m2": 252.0,
+      "wwr": 0.27857
+    },
+    "E": {
+      "wall_m2": 141.4,
+      "window_m2": 54.6,
+      "shading_h_m2": 23.52,
+      "shading_v_m2": 9.52,
+      "gross_facade_m2": 196.0,
+      "wwr": 0.27857
+    },
+    "N": {
+      "wall_m2": 181.8,
+      "window_m2": 70.2,
+      "shading_h_m2": 30.24,
+      "shading_v_m2": 12.24,
+      "gross_facade_m2": 252.0,
+      "wwr": 0.27857
+    }
+  },
+  "warning": "Raw mesh area and Rhino exact area are geometry measurements, not certified ETTV envelope areas. Labels and conditioned envelope need review."
+}

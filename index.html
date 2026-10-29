@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1422" />
+    <title>FaçadeScan — Rhino 3D Area Inspector</title>
+    <script type="module" crossorigin src="./assets/index-R3zZUGoe.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DJhThShy.css">
+  </head>
+  <body>
+    <div id="app">
+      <header class="header">
+        <button id="back-main-menu" class="soft-btn main-menu-button" type="button" title="Back to main menu" aria-label="Back to main menu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/></svg></button>
+        <div class="brand"><div class="logo"><span>F</span><span class="logo-dot"></span></div><div><b>FaçadeScan</b><small>BUILDING ENVELOPE PERFORMANCE</small></div></div>
+        <div id="top-actions" class="top-actions" hidden>
+          <button id="reset-camera" class="soft-btn" title="Reset camera position">↻ <span>Reset View</span></button>
+          <button id="go-results" class="soft-btn" type="button">◈ <span>ETTV Analysis</span></button>
+          <button id="download-results" class="soft-btn" title="Download area table">↓ <span>Export CSV</span></button>
+          <button id="edit-own-geometry" class="soft-btn" type="button" hidden>Edit geometry</button>
+        </div>
+      </header>
+      <main id="mode-choice" class="workflow-page mode-choice">
+        <div class="workflow-title"><span class="eyebrow">BUILDING ENVELOPE PERFORMANCE</span><h1>What would you like to <em>do?</em></h1><p>Import a model, explore material combinations, or create your own geometry.</p></div>
+        <div class="mode-cards">
+          <article class="mode-card"><span class="eyebrow">OPTION 1</span><h2>Calculate my building ETTV</h2><p>Import a Rhino export or use a sample model. Review façade areas, materials, shading and the calculated ETTV.</p><button id="choose-calculate" class="primary-btn" type="button">Calculate ETTV →</button></article>
+          <article class="mode-card"><span class="eyebrow">OPTION 2</span><h2>Find material &amp; shading combinations</h2><p>Use the same building data to search website material presets and measured shading scenarios that can meet the 45 W/m² project target.</p><button id="choose-recommend" class="primary-btn" type="button">Find combinations →</button></article>
+          <article class="mode-card"><span class="eyebrow">OPTION 3</span><h2>Make my own geometry</h2><p>Draw a footprint, push/pull its height, then add glazing and shading. See dimensions and assess materials using your own design.</p><button id="choose-create" class="primary-btn" type="button">Make my own geometry →</button></article>
+        </div>
+      </main>
+      <nav id="workflow-stepper" class="workflow-stepper" aria-label="Analysis steps" hidden>
+        <button type="button" class="workflow-step active" data-go-step="1"><span>1</span><b>Import Model</b></button>
+        <i></i>
+        <button type="button" class="workflow-step" data-go-step="2"><span>2</span><b>Map Geometry</b></button>
+        <i></i>
+        <button type="button" class="workflow-step" data-go-step="3"><span>3</span><b>Materials &amp; Results</b></button>
+      </nav>
+      <main id="step-create" class="geometry-editor-page" data-step-panel="editor" hidden>
+        <div class="geometry-editor-heading"><div><span class="eyebrow">DESIGN YOUR ENVELOPE</span><h1>Make my own geometry</h1><p>Draw in metres. Extrude a footprint, select a wall, then draw its windows.</p></div><div class="results-actions"><button id="geometry-back" class="soft-btn" type="button">← Workflows</button><button id="geometry-assess" class="primary-btn" type="button" disabled>Assess materials →</button></div></div>
+        <div class="geometry-toolbar" role="toolbar" aria-label="Geometry drawing tools">
+          <button type="button" class="soft-btn" data-geometry-tool="select" aria-pressed="true">Select / Move</button>
+          <button type="button" class="soft-btn geometry-tool-icon" data-geometry-tool="polyline" aria-pressed="false" aria-label="Polyline" title="Polyline"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 18 9 6l10 9"/><rect x="3" y="16" width="4" height="4"/><rect x="7" y="4" width="4" height="4"/><rect x="17" y="13" width="4" height="4"/></svg></button>
+          <button type="button" class="soft-btn geometry-tool-icon" data-geometry-tool="rectangle" aria-pressed="false" aria-label="Rectangle" title="Rectangle"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="1"/></svg></button>
+          <button type="button" class="soft-btn geometry-tool-icon" data-geometry-tool="circle" aria-pressed="false" aria-label="Circle" title="Circle"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/></svg></button>
+          <button type="button" class="soft-btn geometry-tool-icon" data-geometry-tool="push" aria-pressed="false" aria-label="Push / Pull" title="Push / Pull"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 15 9-4 9 4-9 5-9-5Zm0 0v4l9 4 9-4v-4M12 12V2m-4 4 4-4 4 4"/></svg></button>
+          <button type="button" class="soft-btn geometry-tool-icon" id="geometry-copy" aria-label="Copy" title="Copy" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="1"/><path d="M16 8V4H4v12h4"/></svg></button>
+          <button type="button" class="soft-btn geometry-tool-icon" id="geometry-move" aria-label="Move" title="Move" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M2 12h20M9 5l3-3 3 3M9 19l3 3 3-3M5 9l-3 3 3 3M19 9l3 3-3 3"/></svg></button>
+          <button type="button" class="soft-btn geometry-tool-icon" id="geometry-delete" aria-label="Delete selection" title="Delete selection" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7"/></svg></button>
+          <button type="button" class="soft-btn geometry-tool-icon" id="geometry-rotate" aria-label="Rotate" title="Rotate" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 8a9 9 0 0 0-15-3L2 8m0-6v6h6M4 16a9 9 0 0 0 15 3l3-3m0 6v-6h-6"/></svg></button>
+          <button type="button" class="soft-btn geometry-tool-icon" id="geometry-scale" aria-label="Scale" title="Scale uniformly" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3H3v18h18v-6M10 14 21 3m-8 0h8v8"/><path d="M3 14h7v7"/></svg></button>
+          <button type="button" class="soft-btn geometry-tool-icon" data-geometry-tool="tape" aria-pressed="false" aria-label="Tape measure" title="Tape measure: click two endpoints or midpoints"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 16 13-12 5 5L8 21Z M7 13l3 3m0-6 3 3m0-6 3 3"/></svg></button>
+          <button type="button" class="soft-btn geometry-tool-icon" data-geometry-tool="arc" aria-pressed="false" aria-label="Arc" title="Arc: start, point on curve, end. Continues a polyline."><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19Q12-9 21 19"/><circle cx="3" cy="19" r="2"/><circle cx="21" cy="19" r="2"/><circle cx="12" cy="5" r="2"/></svg></button>
+          <button type="button" class="soft-btn" id="geometry-finish" disabled>Close outline</button>
+          <span class="geometry-toolbar-divider"></span>
+          <button type="button" class="soft-btn" id="geometry-undo" disabled>Undo</button><button type="button" class="soft-btn" id="geometry-redo" disabled>Redo</button>
+        </div>
+        <div class="geometry-editor-layout">
+          <aside class="geometry-editor-settings">
+            <label for="geometry-layer">Active layer</label>
+            <select id="geometry-layer"><option value="WALL">Wall · orange</option><option value="WINDOW">Window / glazing · blue</option><option value="SHADING_H">Horizontal shading · purple</option><option value="SHADING_V">Vertical shading · pink</option><option value="ROOF">Roof</option><option value="FLOOR">Floor</option></select>
+            <div class="geometry-field-pair"><div><label for="geometry-elevation">Elevation (m)</label><input id="geometry-elevation" type="number" value="0" min="0" max="200" step="0.1" /></div><div><label for="geometry-snap">Grid snap (m)</label><select id="geometry-snap"><option value="0.1">0.10</option><option value="0.25">0.25</option><option value="0.5">0.50</option><option value="1">1.00</option></select></div></div>
+            <label for="geometry-plane">Drawing plane</label><select id="geometry-plane"><option value="auto">Surface under cursor</option><option value="ground">Ground at elevation</option><option value="selected">Selected surface</option></select>
+            <p class="geometry-help">To add a storey: choose Wall + Surface under cursor, draw on the roof, then Push / Pull. The roof elevation is automatic. For windows, choose Window / glazing and click a wall.</p>
+            <div class="geometry-control-section"><h2>Push / Pull</h2><label for="geometry-height">Building height (m)</label><div class="geometry-field-pair"><input id="geometry-height" type="number" value="3" min="0.1" max="200" step="0.1" /><button id="geometry-apply-height" type="button" class="soft-btn">Apply height</button></div><p class="geometry-help">Select a footprint, roof, or wall. Drag with Push / Pull, or enter its height here.</p></div>
+            <details class="geometry-control-section"><summary>Glazing along curved walls</summary>
+              <p class="geometry-help">Select a wall segment. Length follows the perimeter from that segment’s local start toward the next segment. Glass is split into flat panels along the curve.</p>
+              <div class="geometry-field-pair"><div><label for="geometry-glass-offset">Start offset (m)</label><input id="geometry-glass-offset" type="number" value="0.05" min="0.01" step="0.01" /></div><div><label for="geometry-glass-length">Length along wall (m)</label><input id="geometry-glass-length" type="number" value="3" min="0.01" step="0.1" /></div></div>
+              <div class="geometry-field-pair"><div><label for="geometry-glass-sill">Sill above base (m)</label><input id="geometry-glass-sill" type="number" value="0.8" min="0.01" step="0.1" /></div><div><label for="geometry-glass-height">Glass height (m)</label><input id="geometry-glass-height" type="number" value="1.5" min="0.01" step="0.1" /></div></div>
+              <button id="geometry-add-strip" class="soft-btn" type="button" disabled>Add glazing strip</button>
+            </details>
+            <div class="geometry-control-section"><h2>Window shading</h2>
+              <label for="geometry-shade-depth">Blade length P (m)</label><input id="geometry-shade-depth" type="number" value="0.5" min="0.04" max="3" step="0.01" />
+              <div class="geometry-field-pair"><div><label for="geometry-shade-count">Number of blades</label><input id="geometry-shade-count" type="number" value="1" min="1" max="30" step="1" /></div><div><label for="geometry-shade-spacing">Blade spacing (m)</label><input id="geometry-shade-spacing" type="number" min="0.01" step="0.01" placeholder="Auto: span / count" disabled /></div></div>
+              <label for="geometry-shade-inclination">Inclination (°)</label><div class="geometry-field-pair"><input id="geometry-shade-inclination" type="number" value="0" min="0" max="50" step="1" /><button id="geometry-add-shade" type="button" class="soft-btn" disabled>Add / update</button></div>
+              <p id="geometry-shade-summary" class="geometry-help" aria-live="polite">Select a window and a shading layer.</p>
+              <p class="geometry-help">Spacing is measured on the wall between blade attachment lines, not the clear gap between inclined tips. Blank spacing distributes blades evenly. First blade starts at the top (H) or left (V); the final interval ends at the window edge. Rectangular windows support arrays. Selecting a blade edits/deletes its entire array.</p>
+              <p class="geometry-help"><a href="https://isomer-user-content.by.gov.sg/338/0e00ac51-e11a-402c-bd9d-fddd2f16a9d4/retv.pdf#page=31" target="_blank" rel="noopener">BCA Appendix B</a>: R₁ = P / H, R₂ = P / W. Inclination 0–50°. Each interval is calculated separately; SC is area weighted.</p>
+            </div>
+            <div class="geometry-control-section"><h2>Orientation</h2><div class="geometry-field-pair"><select id="geometry-orientation" aria-label="Selected facade orientation"><option>N</option><option>NE</option><option>E</option><option>SE</option><option>S</option><option>SW</option><option>W</option><option>NW</option></select><button id="geometry-update-orientation" class="soft-btn" type="button" disabled>Assign</button></div><p class="geometry-help">Wall directions are detected automatically. Assign an override to its windows and shades together.</p></div>
+            <details class="geometry-layer-tree" open><summary>Layers &amp; orientations</summary><div id="geometry-layers"></div></details>
+          </aside>
+          <div class="geometry-editor-stage">
+            <div id="geometry-editor-canvas"><div class="geometry-view-hint">X east · Y north · Z up · metres<br/>Right-drag or drag XYZ to orbit · Scroll to zoom</div><div id="geometry-navigation" class="geometry-navigation"></div><div id="geometry-dimensions" aria-hidden="true"></div><div id="geometry-live-dimensions" aria-live="polite">Dimensions appear as you draw or select a surface.</div></div>
+            <form id="geometry-rotate-scale" class="geometry-rectangle-size" hidden>
+              <strong id="geometry-rotate-scale-title">Rotate selection</strong>
+              <label for="geometry-transform-value"><span id="geometry-transform-value-label">Angle (°)</span><input id="geometry-transform-value" type="number" value="90" step="any" required /></label>
+              <label id="geometry-rotation-axis-label" for="geometry-rotation-axis">Axis<select id="geometry-rotation-axis"><option value="z">Z — vertical</option><option value="x">X — east</option><option value="y">Y — north</option></select></label>
+              <button type="submit" class="soft-btn">Apply ↵</button><button id="geometry-rotate-scale-cancel" type="button" class="soft-btn">Cancel</button>
+              <small>Buildings: rotate around vertical Z; scale uniformly about the base centre, including glazing/shading. Windows: rotate/scale in their host plane. Independent surfaces: rotate about their centre. Transforming attached shades makes them independent; review shading pairing.</small>
+            </form>
+            <form id="geometry-transform" class="geometry-rectangle-size" hidden>
+              <strong id="geometry-transform-title">Move selection</strong>
+              <label for="geometry-offset-x">ΔX east (m)<input id="geometry-offset-x" type="number" step="any" value="0" required /></label>
+              <label for="geometry-offset-y">ΔY north (m)<input id="geometry-offset-y" type="number" step="any" value="0" required /></label>
+              <label for="geometry-offset-z">ΔZ up (m)<input id="geometry-offset-z" type="number" step="any" value="0" required /></label>
+              <button class="soft-btn" type="submit">Apply ↵</button><button class="soft-btn" id="geometry-transform-cancel" type="button">Cancel</button>
+              <small>Drag a surface to place it, or enter offsets in metres. X / Y / Z locks drag parallel to an axis. Building faces move/copy the entire volume with its windows and shades. Windows stay on their host wall. Moving/copying an attached shade makes it independent; review shading pairing after assessment.</small>
+            </form>
+            <form id="geometry-rectangle-size" class="geometry-rectangle-size" hidden>
+              <label for="geometry-rectangle-length">Length (m)<input id="geometry-rectangle-length" type="number" min="0.001" step="any" required placeholder="e.g. 10" /></label>
+              <label for="geometry-rectangle-width">Width / height (m)<input id="geometry-rectangle-width" type="number" min="0.001" step="any" required placeholder="e.g. 8" /></label>
+              <button class="soft-btn" type="submit">Create rectangle ↵</button>
+              <button class="soft-btn" id="geometry-flip-length" type="button" title="Reverse length direction" aria-label="Reverse length direction">↔</button><button class="soft-btn" id="geometry-flip-width" type="button" title="Reverse width or height direction" aria-label="Reverse width or height direction">↕</button>
+              <small>Length → Tab → Width/height → Enter. Starts right and down from the first corner in your current view. Use ↔ / ↕ to reverse. Keep windows inside the wall. Esc cancels.</small>
+            </form>
+            <div class="geometry-selection-info"><b id="geometry-selected">Select a surface to inspect dimensions or edit it.</b><span id="geometry-coordinates">Drawing plane: ground</span></div>
+            <p id="geometry-editor-status" role="status">Choose Wall, draw a footprint, then use Push / Pull.</p>
+            <details class="geometry-editor-guide"><summary>Drawing guide &amp; model assumptions</summary><ol><li>Choose Wall, then Rectangle, Circle, or Polyline. Click to place points. Press Enter to close a polyline.</li><li>Select the footprint and use Push / Pull or Apply height. Walls, roof and floor are created together.</li><li>In Select / Move mode, click a wall. Choose Window / glazing and draw inside that wall. Its area is removed from the opaque wall.</li><li>Select a window, choose a shading layer, enter a projection and click Add shade.</li><li>Choose Assess materials to calculate ETTV. Return with Edit geometry to change the design.</li></ol><p>Circle footprints use 48 planar segments; each segment maps to the nearest of eight orientations. Areas come from editor geometry, not Rhino. Roof and floor are excluded from façade ETTV. Stacked volumes may meet at roof/floor level. Side-touching or intersecting volumes are rejected. Boolean unions and arbitrary solid-face extrusion are not supported; Push / Pull changes a building footprint's vertical height. Deleting a wall, roof or floor deletes that building and its attached windows/shades; Undo restores it.</p></details>
+          </div>
+        </div>
+        <div class="geometry-editor-files"><span id="geometry-save-status">Draft saves in this browser</span><div><button id="geometry-download" class="soft-btn" type="button">Download design</button><label class="soft-btn action-anchor" for="geometry-load">Load design</label><input id="geometry-load" type="file" accept=".json,application/json" class="visually-hidden" /><button id="geometry-new" class="soft-btn" type="button">New design</button></div></div>
+      </main>
+      <main id="step-import" class="workflow-page import-page" data-step-panel="1" hidden>
+        <div class="workflow-title"><span class="eyebrow">BUILDING ENVELOPE PERFORMANCE</span><h1 id="import-title">Analyze Your <em>Building Envelope</em></h1><p id="import-description">Import a model, map its geometry, then review materials and ETTV results.</p><button id="change-workflow" class="soft-btn" type="button">← Change workflow</button></div>
+        <div class="import-grid">
+          <section class="import-card">
+            <div class="drop-zone">
+              <div class="upload-icon">⇧</div>
+              <h2>Start with a 3D building model</h2>
+              <p>Choose a model to begin the geometry and façade workflow.</p>
+              <div class="rhino-export-guide">
+                <div><b>Using Rhino? Prepare your export package first</b><span>1. Download the exporter. 2. In Rhino 7/8, run it with the <code>_RunPythonScript</code> command.</span></div>
+                <a class="primary-btn" href="/tools/rhino_export_facadescan.py" download="rhino_export_facadescan.py">Download Rhino exporter (.py)</a>
+                <small>It creates a GLB, manifest JSON, audit JSON, and optional review CSV. Upload the GLB and both JSON files below.</small>
+              </div>
+              <label class="primary-btn import-file-label" for="model-file">Import Rhino export package</label>
+              <input id="model-file" class="visually-hidden" type="file" accept=".glb,.json,model/gltf-binary,application/json" multiple />
+              <div id="file-import-status" class="import-status" role="status">Open the .3dm in Rhino 7 or 8, run the FacadeScan export script, then select its GLB, manifest JSON, and audit JSON together here. Raw .3dm upload is not supported yet.</div>
+              <div class="format-list"><span>.3dm <small>Open in Rhino 7/8</small></span><span>.glb <small>3D geometry</small></span><span>.json <small>Area &amp; audit data</small></span></div>
+            </div>
+            <details class="rhino-layer-guide">
+              <summary>Rhino layer guide: what geometry and orientation do I need?</summary>
+              <p>Use separate layers for the building elements below. The category must be the top-level layer name; optionally put the direction in a sublayer with the exact compass code.</p>
+              <div class="layer-guide-table-wrap"><table class="layer-guide-table"><thead><tr><th>Element</th><th>Required top-level layer name</th><th>Example with direction sublayer</th><th>Required?</th></tr></thead><tbody>
+                <tr><td>Opaque exterior wall</td><td><code>WALL</code> or <code>OPAQUE WALL</code></td><td><code>WALL::N</code></td><td>For wall area / ETTV</td></tr>
+                <tr><td>Glazing / windows</td><td><code>WINDOW</code>, <code>GLASS</code>, or <code>GLAZING</code></td><td><code>WINDOW::E</code></td><td>For glazing area / ETTV</td></tr>
+                <tr><td>Horizontal shading</td><td><code>SHADING_H</code>, <code>HORIZONTAL SHADING</code>, or <code>OVERHANG</code></td><td><code>SHADING_H::S</code></td><td>Optional; needed to calculate H-shading</td></tr>
+                <tr><td>Vertical shading / fins</td><td><code>SHADING_V</code>, <code>VERTICAL SHADING</code>, or <code>FIN</code></td><td><code>SHADING_V::W</code></td><td>Optional; needed to calculate V-shading</td></tr>
+                <tr><td>Roof / floor</td><td><code>ROOF</code> / <code>FLOOR</code></td><td><code>ROOF</code></td><td>Optional; not used in façade ETTV</td></tr>
+              </tbody></table></div>
+              <p><b>Orientation:</b> use one of <code>N</code>, <code>NE</code>, <code>E</code>, <code>SE</code>, <code>S</code>, <code>SW</code>, <code>W</code>, or <code>NW</code> as the final sublayer name, for example <code>WINDOW::NE</code>. If no direction sublayer is present, the exporter estimates it from the surface normal; review the mapped direction in Step 2. A direction written only in an object name is not read as a layer override.</p>
+              <p><b>Geometry and matching:</b> model walls, glazing, and shades as visible surfaces, Breps, extrusions, or meshes. For one-to-one pairing, name a window <code>L01_N_B01_WIN</code> and its horizontal / vertical shades <code>L01_N_B01_H</code> / <code>L01_N_B01_V</code>. <code>L01</code> records level and <code>B01</code> records façade segment; use consistent names. Same-orientation, same-level continuous shades may also be matched by geometry. Check unmatched shades and area/direction warnings before trusting ETTV.</p>
+            </details>
+            <div class="sample-model"><div><span class="eyebrow">READY TO EXPLORE</span><b>Bundled 8-direction sample</b><small>Four-storey sample · geometry and areas preloaded</small></div><button id="use-sample-model" class="primary-btn" type="button">Continue →</button></div>
+            <div class="sample-model benchmark-model"><div><span class="eyebrow">BENCHMARK MODEL</span><b>1 floor · WWR 70% · vertical PR 0.20</b><small>14 glazing panels · 14 vertical fins · N/E/S/W</small></div><button id="use-benchmark-model" class="primary-btn" type="button">Open benchmark →</button></div>
+          </section>
+          <aside class="import-checklist">
+            <span class="eyebrow">MODEL PREVIEW</span>
+            <div class="preview-placeholder"><div class="preview-cube">⬡</div><span>Sample model ready</span></div>
+            <b>Analysis checklist</b>
+            <p>✓ Geometry and exact areas loaded</p><p>✓ Eight orientations available</p><p>◷ Review layer mapping and shading</p><p>◷ Confirm thermal materials</p>
+          </aside>
+        </div>
+        <div class="workflow-how"><span class="eyebrow">HOW IT WORKS</span><div><b>1. Import model</b><span>Choose a Rhino or 3D model</span></div><div><b>2. Map geometry</b><span>Assign layers and façade directions</span></div><div><b>3. Review results</b><span>Confirm material inputs and inspect ETTV</span></div></div>
+      </main>
+      <main id="step-geometry" class="dashboard workflow-page" data-step-panel="2" hidden>
+        <aside class="sidebar">
+          <div class="side-head"><span class="eyebrow">GEOMETRY CONTROL</span><h2>Check Geometry</h2><p>Filter the model and select an element to inspect its geometry.</p></div>
+          <div class="side-group"><label for="search" class="input-label">Search object names</label><input id="search" type="search" placeholder="e.g. L04_N_B01_WIN" autocomplete="off" /></div>
+          <div class="side-group"><span class="input-label">Element type</span><div id="category-filters" class="category-list"></div></div>
+          <div class="side-group"><span class="input-label">Orientation</span><div id="orientation-filters" class="chip-list"></div></div>
+          <div class="side-group"><label for="floor" class="input-label">Building level</label><select id="floor"><option value="ALL">All floors</option><option value="1">Level 1</option><option value="2">Level 2</option><option value="3">Level 3</option><option value="4">Level 4</option></select></div>
+          <details class="layer-mapping-panel">
+            <summary class="mapping-heading"><span>Edit layer assignments</span></summary>
+            <p class="mapping-note">Correct element types or orientations if the imported assignments are wrong. Changes affect ETTV calculations. <span id="layer-group-count">—</span> groups available.</p>
+            <div id="layer-mapping-list" class="layer-mapping-list"></div>
+          </details>
+          <div class="side-notice"><span class="notice-icon">i</span><p><b>Verified data</b><br/>Areas are taken from the RhinoCommon export and matched to GLB mesh names.</p></div>
+          <div class="sidebar-bottom"><span id="visible-count">Loading model...</span><button id="show-all">Show all</button></div>
+        </aside>
+        <section class="main-view">
+          <div class="viewport">
+            <div id="scene"></div>
+            <div class="viewport-head"><div><div class="eyebrow">LIVE 3D / GEOMETRY</div><h1>Building Envelope Viewer</h1><p>Select a building element to view its area and orientation.</p></div></div>
+            <div class="compass"><b>N</b><div class="compass-symbol">✧</div><div class="compass-row"><span>W</span><span>E</span></div><span>S</span></div>
+            <div id="tooltip" class="tooltip" hidden></div>
+            <div id="loader" class="loader"><div class="spinner"></div><span>Loading geometry and area data...</span></div>
+            <div id="error-message" class="error-banner" hidden></div>
+            <div class="viewport-foot"><span>◉ Left click: select object</span><span>⤾ Drag: orbit</span><span>⊕ Scroll: zoom</span></div>
+            <div class="legend"><span><i style="--swatch:#ef943d"></i> Wall</span><span><i style="--swatch:#45a9ef"></i> Glazing</span><span><i style="--swatch:#9964e8"></i> H. Shade</span><span><i style="--swatch:#ed77ba"></i> V. Shade</span></div>
+          </div>
+          <div class="metrics"><div class="metric"><span>MEASURED OBJECTS</span><strong id="metric-objects">—</strong><small>Surface/face geometry</small></div><div class="metric"><span>OPAQUE WALL AREA</span><strong id="metric-wall">—</strong><small>m² · by Rhino layer</small></div><div class="metric"><span>GLAZING AREA</span><strong id="metric-window">—</strong><small>m² · by Rhino layer</small></div><div class="metric accent"><span>OVERALL WWR</span><strong id="metric-wwr">—</strong><small>Preliminary · area based</small></div></div>
+          <section class="overview"><div class="section-heading"><div><span class="eyebrow">AREA ANALYSIS</span><h2>Façade by Orientation</h2></div><span class="data-label">Surface areas from Rhino</span></div><div id="orientation-rows"></div><p class="overview-note">WWR = glazing area / (opaque wall area + glazing area). Verify that the surfaces belong to the conditioned exterior envelope before using this for an official ETTV calculation.</p></section>
+          <details class="ettv-workspace result-disclosure" id="ettv-analysis">
+            <summary id="ettv-title">Per-orientation inputs &amp; calculation details</summary>
+            <p id="ettv-description" class="ettv-help">Adjust individual façade materials and shading, or inspect the calculation method.</p>
+            <div class="ettv-equation">ETTV = 12(1 − WWR)Uw + 3.4(WWR)Uf + 211(WWR)(CF)(SC<sub>Glass</sub> × SC<sub>Projection</sub>)</div>
+            <div class="shading-tools">
+              <div><b>Automatic Rhino shading measurement</b><p id="shading-extraction-status">Measuring projection geometry...</p></div>
+              <div class="shading-tools-buttons"><button type="button" id="shading-actual" class="soft-btn">Actual H + V</button><button type="button" id="shading-h-only" class="soft-btn">H-only scenario</button><button type="button" id="shading-v-only" class="soft-btn">V-only scenario</button><button type="button" id="shading-manual" class="soft-btn" title="Enable editable H/V projection ratios per façade in the table below">Manual override</button><button type="button" id="export-shading" class="soft-btn">↓ Export panel PR CSV</button></div>
+            </div>
+            <p id="shading-scenario-message" class="ettv-help">Detected ratios will appear in the table. For flat, perpendicular combination fins, workbook tables C20–C23 cover all eight orientations; for ratios below the table limits, a clearly marked design-only estimate is displayed. H-only/V-only remain comparison scenarios. Select Manual override to enter verified H/V projection ratios per façade.</p>
+            <div class="ettv-table-scroll"><table class="ettv-table"><thead><tr><th>Façade</th><th>Gross area<br/>m²</th><th>Opaque<br/>m²</th><th>Glass<br/>m²</th><th>WWR</th><th>CF</th><th>Uw<br/>W/m²K</th><th>Uf<br/>W/m²K</th><th>Glass SC</th><th>Shading scenario</th><th title="Horizontal-blade inclination is measured from Rhino geometry when available; otherwise this is an editable design input.">H-blade angle<br/>° auto / manual</th><th title="Vertical-fin inclination is measured from Rhino geometry when available; otherwise this is an editable design input.">V-fin angle<br/>° auto / manual</th><th>H PR<br/>measured</th><th>V PR<br/>measured</th><th>SC Projection</th><th>SC Total</th><th>ETTV<br/>W/m²</th></tr></thead><tbody id="ettv-rows"></tbody></table></div>
+            <p class="ettv-help" id="ettv-validation">Area values depend on layer labels and must be verified as external conditioned envelope. Projection ratios and horizontal/vertical blade inclinations are measured from GLB geometry where shading can be paired to glazing. Workbook egg-crate tables C20–C23 have one angle axis (horizontal blade); vertical-fin inclination is shown and used for vertical-only SC lookups, but the egg-crate lookup cannot apply a second independent angle. Ratios below table limits are design-only estimates.</p>
+            <div class="ettv-notes">
+              <div><b>Source & assumptions</b><p>ETTV formula, material values and CF follow the supplied workbook. Corrected egg-crate headings assign C22 to NE/NW and C23 to SE/SW. Tables C20–C23 provide 0–40° horizontal-blade tilt interpolation. Horizontal and vertical shading angles are measured from geometry where possible; the egg-crate workbook table has no separate vertical-fin angle axis. For SC table ratios below minimum, computed values are estimates, not compliant outputs.</p></div>
+              <div><b>Combined shading & scenarios</b><p>Both H and V shades are detected. <strong>Perpendicular, continuous egg-crate geometry</strong> can use workbook Tables C20–C23. Values within the table are interpolated along both projection ratios and the horizontal-blade angle. A separately measured vertical-fin angle is shown, but cannot be applied to the egg-crate lookup without a second workbook angle axis. R1 or R2 below 0.2 are <strong>design estimates only</strong> using a linear extension toward single-device SC and are NOT compliance figures. Select H-only or V-only for comparison scenarios. Manual inputs are available per façade. A mixture of PRs is calculated panel-by-panel with SC area weighting, never by averaging PRs.</p></div>
+            </div>
+          </details>
+        </section>
+        <aside id="element-inspector" class="details" hidden><span class="eyebrow">INSPECTOR PANEL</span><h2>Element Details</h2><div id="details-inner"></div><div class="details-footer"><b>VALIDATION</b><span id="audit-status">Checking objects...</span></div></aside>
+        <div class="workflow-navigation"><button class="soft-btn" type="button" data-go-step="1">← Back</button><span>Review the layer and orientation assignments before continuing.</span><button class="primary-btn" type="button" data-go-step="3">Review materials &amp; results →</button></div>
+      </main>
+      <main id="step-results" class="workflow-page results-page" data-step-panel="3" hidden>
+        <div class="results-heading"><div><span class="eyebrow">MATERIALS &amp; PERFORMANCE</span><h1>Materials &amp; ETTV</h1><p>Choose materials and compare their effect on the building's ETTV.</p></div><div class="results-actions"><button id="results-export-csv" class="soft-btn compact-action" type="button" title="Export ETTV CSV" aria-label="Export ETTV CSV" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg></button><button id="results-back" class="soft-btn compact-action" type="button" title="Back to geometry" aria-label="Back to geometry"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 5-7 7 7 7M3 12h18"/></svg></button></div></div>
+        <div class="results-design-grid">
+          <article class="result-card result-primary" aria-live="polite" aria-atomic="true">
+            <span>OVERALL ETTV</span><strong id="result-overall">—</strong>
+            <b id="ettv-status" class="result-target-status">—</b>
+            <small>Area-weighted · 45 W/m² project target</small>
+            <div class="result-geometry-stats">
+              <div><span>Wall area</span><b id="result-wall-area">—</b></div>
+              <div><span>Glazing area</span><b id="result-glazing-area">—</b></div>
+              <div><span>Gross envelope</span><b id="ettv-envelope">—</b></div>
+              <div><span>Overall WWR</span><b id="result-wwr">—</b></div>
+            </div>
+          </article>
+          <section id="material-controls" class="material-controls" aria-labelledby="material-controls-title">
+            <h2 id="material-controls-title">Choose materials</h2>
+            <p class="ettv-help">Select a wall and glazing preset, then apply them to update ETTV.</p>
+            <div class="material-presets">
+              <div><label for="material-wall-preset">Wall construction</label><select id="material-wall-preset"></select></div>
+              <div><label for="material-glass-preset">Glazing</label><select id="material-glass-preset"></select></div>
+              <button type="button" id="apply-materials" class="primary-btn">Apply to all façades</button>
+              <span id="material-apply-status" class="ettv-help" role="status">Applies the selected presets to every orientation.</span>
+            </div>
+            <div id="result-material-summary" class="result-material-summary" aria-label="Currently applied thermal properties">Loading applied materials…</div>
+          </section>
+        </div>
+        <div class="ettv-alert" id="ettv-alert">Loading model geometry and thermal inputs…</div>
+        <details id="results-materials" class="results-materials result-disclosure">
+          <summary>Applied materials by orientation</summary>
+          <div class="results-materials-scroll"><table class="results-materials-table"><thead><tr><th>Orientation</th><th>Opaque wall material</th><th>Uw<br/>W/m²K</th><th>Glazing material</th><th>Uf<br/>W/m²K</th><th>Glass SC</th></tr></thead><tbody id="results-material-rows"></tbody></table></div>
+        </details>
+        <section class="results-chart-card"><div class="section-heading"><div><span class="eyebrow">ORIENTATION BREAKDOWN</span><h2>ETTV by façade direction</h2></div><span class="data-label">Dashed line = 45 W/m² project target</span></div><div id="ettv-chart" class="ettv-chart" role="img" aria-label="ETTV by orientation chart"></div></section>
+        <section id="recommendation-panel" class="recommendation-panel" hidden>
+          <div class="section-heading"><div><span class="eyebrow">MATERIAL &amp; SHADING SEARCH</span><h2>Find combinations for ETTV ≤ 45 W/m²</h2><p>Tests the website's wall/glazing material presets with no shading and shading measured from this model.</p></div><button id="run-recommendations" class="primary-btn" type="button">Search combinations</button></div>
+          <details class="search-assumptions"><summary>Search scope &amp; assumptions</summary><p class="recommendation-caveat">Recommendations assume the same selected wall and glazing materials across all façade orientations. Shading choices use only this model's measured H+V, H-only or V-only geometry, plus a no-shading comparison; the search does not invent new shading dimensions or PR values. Add proposed shades to the model and re-import to test them. The workbook uses Glass SC, not SHGC; no SHGC conversion is applied. Only tabulated, non-estimated shading results are listed. Review material availability, cost, constructability and regulatory requirements separately.</p></details>
+          <div id="recommendation-results" aria-live="polite"><p>Choose <b>Search combinations</b> to calculate options from this building's geometry.</p></div>
+        </section>
+        <div id="results-workspace"></div>
+        <div class="workflow-navigation"><button class="soft-btn" type="button" data-go-step="2">← Back to geometry</button><span>ETTV is preliminary; verify source geometry, materials, and regulatory method.</span></div>
+      </main>
+      <footer class="footer">FaçadeScan · Prototype geometry viewer <span>Rhino / glTF / Three.js / ETTV workflow</span></footer>
+    </div>
+  </body>
+</html>

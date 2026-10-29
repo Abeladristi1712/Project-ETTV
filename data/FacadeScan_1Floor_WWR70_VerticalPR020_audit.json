@@ -1,0 +1,82 @@
+{
+  "total_objects": 76,
+  "csv_measured": 76,
+  "category_counts": {
+    "WALL": 46,
+    "WINDOW": 14,
+    "SHADING_V": 14,
+    "ROOF": 1,
+    "FLOOR": 1
+  },
+  "csv_measured_without_glb_match": [],
+  "mesh_area_difference_gt_0_01_m2": [],
+  "orientation_mismatches_wall_window": [],
+  "purpose": "FacadeScan one-storey 70% WWR + vertical-only PR0.20 geometry test",
+  "conditioned_envelope_assumption": "All four exterior fa\u00e7ades conditioned; roof/floor excluded from ETTV wall/window total",
+  "facades": {
+    "N": {
+      "orientation": "N",
+      "facade_length_m": 10.0,
+      "height_m": 3.6,
+      "window_count": 4,
+      "window_width_m": 2.15,
+      "window_height_m": 2.9302325581395348,
+      "window_sill_m": 0.33488372093023266,
+      "side_gap_m": 0.2800000000000001,
+      "vertical_fin_projection_m": 0.43,
+      "vertical_projection_ratio": 0.2,
+      "wall_area_m2": 10.800000000000002,
+      "glazing_area_m2": 25.2,
+      "gross_facade_area_m2": 36.0,
+      "wwr": 0.7
+    },
+    "E": {
+      "orientation": "E",
+      "facade_length_m": 8.0,
+      "height_m": 3.6,
+      "window_count": 3,
+      "window_width_m": 2.18,
+      "window_height_m": 3.0825688073394493,
+      "window_sill_m": 0.2587155963302754,
+      "side_gap_m": 0.36499999999999977,
+      "vertical_fin_projection_m": 0.43600000000000005,
+      "vertical_projection_ratio": 0.2,
+      "wall_area_m2": 8.640000000000002,
+      "glazing_area_m2": 20.16,
+      "gross_facade_area_m2": 28.8,
+      "wwr": 0.7
+    },
+    "S": {
+      "orientation": "S",
+      "facade_length_m": 10.0,
+      "height_m": 3.6,
+      "window_count": 4,
+      "window_width_m": 2.15,
+      "window_height_m": 2.9302325581395348,
+      "window_sill_m": 0.33488372093023266,
+      "side_gap_m": 0.2800000000000001,
+      "vertical_fin_projection_m": 0.43,
+      "vertical_projection_ratio": 0.2,
+      "wall_area_m2": 10.800000000000002,
+      "glazing_area_m2": 25.2,
+      "gross_facade_area_m2": 36.0,
+      "wwr": 0.7
+    },
+    "W": {
+      "orientation": "W",
+      "facade_length_m": 8.0,
+      "height_m": 3.6,
+      "window_count": 3,
+      "window_width_m": 2.18,
+      "window_height_m": 3.0825688073394493,
+      "window_sill_m": 0.2587155963302754,
+      "side_gap_m": 0.36499999999999977,
+      "vertical_fin_projection_m": 0.43600000000000005,
+      "vertical_projection_ratio": 0.2,
+      "wall_area_m2": 8.640000000000002,
+      "glazing_area_m2": 20.16,
+      "gross_facade_area_m2": 28.8,
+      "wwr": 0.7
+    }
+  }
+}
